@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAA103 Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0f0f11;--surface:#1a1a1e;--surface2:#242428;--border:#2e2e34;--text:#f0f0f2;--muted:#8a8a96;--accent:#7c6cfc;--accent-soft:#2a2440;--green:#3ecf8e;--green-soft:#0d2b1f;--red:#f87171;--red-soft:#2b0f0f;--amber:#f59e0b;--amber-soft:#2d1f02;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;}
+.container{width:100%;max-width:700px;}
+.header{text-align:center;margin-bottom:2rem;}
+.header h1{font-size:1.6rem;font-weight:600;letter-spacing:-0.02em;margin-bottom:0.3rem;}
+.header p{color:var(--muted);font-size:0.88rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;}
+/* NAV TABS */
+.tabs{display:flex;gap:0.4rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab{padding:0.5rem 1rem;font-size:0.85rem;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;transition:all 0.15s;margin-bottom:-1px;}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab:hover{color:var(--text);}
+/* CRASH COURSE */
+#crash-screen{display:block;}
+.topic-nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0.4rem;margin-bottom:1.5rem;}
+.tnav-btn{padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.78rem;cursor:pointer;text-align:left;transition:all 0.15s;}
+.tnav-btn:hover,.tnav-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.crash-content{display:none;}
+.crash-content.visible{display:block;}
+.crash-title{font-size:1.15rem;font-weight:600;margin-bottom:1rem;color:var(--text);}
+.crash-section{margin-bottom:1.25rem;}
+.crash-section h4{font-size:0.82rem;font-family:'DM Mono',monospace;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.6rem;}
+.crash-section p{font-size:0.88rem;color:var(--muted);line-height:1.7;margin-bottom:0.5rem;}
+.crash-section p b{color:var(--text);font-weight:500;}
+.formula-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;margin:0.5rem 0;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--green);line-height:1.8;}
+.tip-box{background:var(--amber-soft);border:1px solid var(--amber);border-radius:8px;padding:0.75rem 1rem;margin:0.5rem 0;font-size:0.84rem;color:#fcd34d;line-height:1.6;}
+.tip-box b{color:var(--amber);}
+.example-box{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:0.75rem 1rem;margin:0.5rem 0;font-size:0.84rem;color:var(--muted);line-height:1.6;}
+.example-box b{color:var(--text);}
+.remember-list{list-style:none;padding:0;}
+.remember-list li{padding:0.35rem 0;font-size:0.86rem;color:var(--muted);line-height:1.5;}
+.remember-list li::before{content:"→ ";color:var(--accent);}
+.remember-list li b{color:var(--text);}
+/* QUIZ */
+#quiz-screen{display:none;}
+.progress-wrap{margin-bottom:1.5rem;}
+.progress-meta{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;}
+.progress-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.4s ease;}
+.topic-tag{display:inline-block;font-size:0.7rem;font-family:'DM Mono',monospace;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:3px 10px;margin-bottom:1rem;}
+.question{font-size:1.05rem;font-weight:500;line-height:1.55;margin-bottom:1.5rem;}
+.options{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.25rem;}
+.opt{width:100%;text-align:left;padding:0.85rem 1rem;border:1px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;transition:border-color 0.15s,background 0.15s;line-height:1.4;}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);}
+.opt:disabled{cursor:default;}
+.opt.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.opt.wrong{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.opt.reveal{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.explanation{padding:0.9rem 1rem;border-radius:10px;font-size:0.86rem;line-height:1.6;margin-bottom:1.25rem;border-left:3px solid var(--green);background:var(--green-soft);color:#a7f3d0;display:none;}
+.explanation.wrong{border-left-color:var(--red);background:var(--red-soft);color:#fca5a5;}
+.bottom-row{display:flex;justify-content:space-between;align-items:center;}
+.score-text{font-size:0.8rem;color:var(--muted);font-family:'DM Mono',monospace;}
+.next-btn{padding:0.6rem 1.4rem;border-radius:8px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:background 0.15s;display:none;}
+.next-btn:hover{background:var(--accent);color:#fff;}
+/* TOPIC FILTER */
+.filter-section{margin-bottom:1.25rem;}
+.filter-label{font-size:0.75rem;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:0.4rem;margin-bottom:1rem;}
+.topic-check{display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.7rem;border:1px solid var(--border);border-radius:7px;background:var(--surface2);cursor:pointer;font-size:0.78rem;color:var(--muted);transition:all 0.15s;user-select:none;}
+.topic-check.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.topic-check input{display:none;}
+/* SUMMARY */
+#summary-screen{display:none;}
+.summary-top{text-align:center;margin-bottom:1.5rem;}
+.big-score{font-size:4rem;font-weight:600;letter-spacing:-0.04em;color:var(--accent);line-height:1;margin-bottom:0.3rem;}
+.grade-label{font-size:0.95rem;color:var(--muted);}
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:1.25rem;}
+.brow{display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;padding:0.45rem 0.7rem;border-radius:7px;background:var(--bg);border:1px solid var(--border);}
+.brow .tname{color:var(--muted);}
+.brow .tscore{font-family:'DM Mono',monospace;font-weight:500;}
+.tscore.ok{color:var(--green);}
+.tscore.bad{color:var(--red);}
+.share-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1.25rem;}
+.share-label{font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.65rem;}
+.share-text{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--text);line-height:1.75;white-space:pre;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.85rem 1rem;margin-bottom:0.75rem;overflow-x:auto;user-select:all;}
+.copy-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1.1rem;border-radius:7px;border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.copy-btn:hover{background:var(--accent);color:#fff;}
+.copy-btn.copied{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+.btn-row{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;}
+.btn-solid{padding:0.7rem 1.5rem;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:opacity 0.15s;}
+.btn-solid:hover{opacity:0.85;}
+.btn-outline{padding:0.7rem 1.5rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;transition:border-color 0.15s;}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>MAA103 Exam Prep</h1>
+    <p>Crash courses + quiz trainer &mdash; all 10 topics</p>
+  </div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('crash')">Crash Courses</button>
+      <button class="tab" onclick="showTab('quiz')">Quiz</button>
+      <button class="tab" id="results-tab" onclick="showTab('summary')" style="display:none">Results</button>
+    </div>
+
+    <!-- CRASH COURSE SCREEN -->
+    <div id="crash-screen">
+      <div class="topic-nav" id="topic-nav"></div>
+      <div id="crash-contents"></div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen">
+      <div class="filter-section">
+        <div class="filter-label">Select topics</div>
+        <div class="topic-grid" id="topic-grid"></div>
+        <button class="btn-solid" onclick="startQuiz()" id="start-btn">Start quiz</button>
+      </div>
+      <div id="q-area" style="display:none;">
+        <div class="progress-wrap">
+          <div class="progress-meta"><span id="q-counter"></span><span id="score-top"></span></div>
+          <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        </div>
+        <div class="topic-tag" id="q-topic"></div>
+        <div class="question" id="q-text"></div>
+        <div class="options" id="q-options"></div>
+        <div class="explanation" id="q-exp"></div>
+        <div class="bottom-row">
+          <span class="score-text" id="score-bottom"></span>
+          <button class="next-btn" id="next-btn" onclick="nextQ()">Next &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY SCREEN -->
+    <div id="summary-screen">
+      <div class="summary-top">
+        <div class="big-score" id="sum-score"></div>
+        <div class="grade-label" id="sum-label"></div>
+      </div>
+      <div class="breakdown-grid" id="breakdown-grid"></div>
+      <div class="share-box">
+        <div class="share-label">Share your results</div>
+        <div class="share-text" id="share-text"></div>
+        <button class="copy-btn" id="copy-btn" onclick="copyResult()">Copy to clipboard</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn-solid" onclick="resetQuiz()">Try again</button>
+        <button class="btn-outline" onclick="focusWeak()">Focus weak topics</button>
+        <button class="btn-outline" onclick="showTab('crash')">Review crash courses</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var COURSES = [
+  {
+    id:"T1",label:"T1: Intro",title:"Topic 1 — Accounting & Regulation",
+    sections:[
+      {h:"What is accounting?",body:"<p>Accounting is about <b>collecting, recording and reporting financial information</b> so that people can make good decisions. Think of it like a scoreboard for a business — it tells you how the business is performing.</p><p>The <b>primary purpose</b> is always: provide useful information for decision making. Not tax. Not compliance. Decision making.</p>"},
+      {h:"Who uses accounting information?",body:"<p><b>Internal users</b> — managers, owners (they run the business day to day)</p><p><b>External users</b> — investors, banks, suppliers, ATO (they need info to decide whether to lend money, invest, or extend credit)</p>"},
+      {h:"Who sets the rules?",body:"<p><b>AASB</b> (Australian Accounting Standards Board) — sets the accounting standards in Australia. These are the rules businesses must follow when preparing financial reports.</p><p><b>ASIC</b> — enforces the rules. Makes sure companies comply.</p><p><b>ASX</b> — stock exchange rules for listed companies.</p>"},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Watch out:</b> Questions often ask what the PRIMARY purpose of accounting is. The answer is ALWAYS "provide useful information for decision making" — not tax minimisation, not compliance.</div>'}
+    ]
+  },
+  {
+    id:"T2",label:"T2: Elements",title:"Topic 2 — Accounting Elements & Equation",
+    sections:[
+      {h:"The 5 accounting elements",body:'<div class="formula-box">ASSETS — things the business OWNS (cash, equipment, inventory, accounts receivable)\nLIABILITIES — things the business OWES (loans, accounts payable, GST payable)\nOWNERS EQUITY — the owners stake (what\'s left after paying debts)\nREVENUE — money EARNED from business activity\nEXPENSES — costs INCURRED to run the business</div>'},
+      {h:"The accounting equation",body:'<div class="formula-box">ASSETS = LIABILITIES + OWNER\'S EQUITY</div><p>This <b>must always balance</b>. Every single transaction keeps this equation in balance. If assets go up by $1,000, either a liability or equity must also go up by $1,000.</p>'},
+      {h:"Accrual vs Cash accounting",body:"<p><b>Cash accounting</b> — record when cash moves. Simple but incomplete.</p><p><b>Accrual accounting</b> — record when the transaction HAPPENS, regardless of cash. This is what businesses use.</p>"},
+      {h:"Examples",body:'<div class="example-box"><b>Asset:</b> Cash, Car, Building, Accounts Receivable, Inventory, Prepaid Insurance<br><b>Liability:</b> Bank Loan, Accounts Payable, GST Payable, Wages Payable<br><b>Equity:</b> Capital contributed by owner, Retained earnings</div>'},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Watch out:</b> Accounts RECEIVABLE is an asset (someone owes YOU money). Accounts PAYABLE is a liability (YOU owe someone money). Students mix these up constantly.</div>'}
+    ]
+  },
+  {
+    id:"T3",label:"T3: Transactions",title:"Topic 3 — Analysing Business Transactions",
+    sections:[
+      {h:"What is a business transaction?",body:"<p>A business transaction is any event that <b>changes the accounting equation</b>. Not every event is a transaction — a manager thinking about buying something is NOT a transaction. Actually buying it IS.</p>"},
+      {h:"How to analyse a transaction",body:'<p>Ask yourself 3 questions:</p><ul class="remember-list"><li>What accounts are affected?</li><li>Does each account go UP or DOWN?</li><li>Does the equation still balance?</li></ul>'},
+      {h:"Common transaction examples",body:'<div class="example-box"><b>Owner puts $20k cash in:</b> Cash (Asset) +$20k, Owner Equity +$20k<br><br><b>Buy equipment $10k on credit:</b> Equipment (Asset) +$10k, Accounts Payable (Liability) +$10k<br><br><b>Pay $2k rent in cash:</b> Cash (Asset) -$2k, Rent Expense (reduces Equity) -$2k<br><br><b>Earn $5k revenue in cash:</b> Cash (Asset) +$5k, Revenue (increases Equity) +$5k</div>'},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Remember:</b> When you pay an expense, BOTH an asset (cash) AND equity go DOWN. When you earn revenue, BOTH an asset (cash or receivable) AND equity go UP. The equation always stays balanced.</div>'}
+    ]
+  },
+  {
+    id:"T4",label:"T4: Journals",title:"Topic 4 — Journals & Ledgers",
+    sections:[
+      {h:"The debit/credit rules",body:'<div class="formula-box">ASSETS:     increase = DEBIT,  decrease = CREDIT\nLIABILITIES: increase = CREDIT, decrease = DEBIT\nEQUITY:     increase = CREDIT, decrease = DEBIT\nREVENUE:    increase = CREDIT, decrease = DEBIT\nEXPENSES:   increase = DEBIT,  decrease = CREDIT</div><p>Every journal entry must have equal debits and credits.</p>'},
+      {h:"Common journal entries",body:'<div class="example-box"><b>Pay rent $2k cash:</b><br>Dr Rent Expense $2,000<br>Cr Cash $2,000<br><br><b>Customer pays $3k they owed:</b><br>Dr Cash $3,000<br>Cr Accounts Receivable $3,000<br><br><b>Buy supplies $500 on credit:</b><br>Dr Supplies $500<br>Cr Accounts Payable $500</div>'},
+      {h:"General Journal vs General Ledger",body:"<p><b>General Journal</b> — like a diary. Records every transaction in DATE order with Dr and Cr entries.</p><p><b>General Ledger</b> — like a filing system. Groups all entries by ACCOUNT (all Cash together, all AR together etc). Shows running balance for each account.</p>"},
+      {h:"Trial Balance",body:"<p>After posting to the ledger, you prepare a <b>Trial Balance</b> — a list of all accounts with their balances. Total debits must equal total credits. If they don't, you made an error somewhere.</p>"},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Memory trick:</b> DEAL — Dividends, Expenses, Assets increase with Debits. Everything else (Liabilities, Equity, Revenue) increases with Credits.</div>'}
+    ]
+  },
+  {
+    id:"T5",label:"T5: GST",title:"Topic 5 — GST & PAYG",
+    sections:[
+      {h:"What is GST?",body:"<p><b>Goods and Services Tax</b> — a 10% tax on most goods and services in Australia. Businesses collect it from customers on behalf of the ATO and then pay it over.</p>"},
+      {h:"How it works",body:'<div class="formula-box">GST COLLECTED (from customers) = GST Payable (LIABILITY)\nGST PAID (on purchases)     = GST Receivable (ASSET)\nNET GST OWED TO ATO         = GST Payable - GST Receivable</div>'},
+      {h:"Example",body:'<div class="example-box"><b>Sell goods for $1,100 (inc GST):</b><br>Dr Cash $1,100<br>Cr Sales Revenue $1,000<br>Cr GST Payable $100<br><br><b>Buy supplies for $220 (inc GST):</b><br>Dr Supplies $200<br>Dr GST Receivable $20<br>Cr Cash $220</div>'},
+      {h:"PAYG",body:"<p><b>Pay As You Go (PAYG)</b> — businesses withhold tax from employee wages and send it to the ATO. The withheld amount is a liability (PAYG Withholding Payable) until paid to the ATO.</p>"},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Remember:</b> GST collected from customers = LIABILITY (you owe it to the ATO). GST paid on purchases = ASSET (the ATO owes it back to you). Net the two to find what you owe.</div>'}
+    ]
+  },
+  {
+    id:"T6",label:"T6: BDAs",title:"Topic 6 — Balance Day Adjustments",
+    sections:[
+      {h:"Why BDAs exist",body:"<p>Under accrual accounting, some transactions happen <b>without a source document</b> — like wages earned but not yet paid. At the end of the period we need to adjust the books to make sure revenues and expenses are in the RIGHT period.</p>"},
+      {h:"The 4 types of BDA",body:'<div class="formula-box">1. ACCRUED EXPENSES   — expense incurred, not yet paid\n   Dr Expense  /  Cr Expense Payable\n\n2. ACCRUED REVENUE    — revenue earned, not yet received\n   Dr Revenue Receivable  /  Cr Revenue\n\n3. PREPAID EXPENSES   — cash paid in advance, expense used up over time\n   Dr Expense  /  Cr Prepaid Asset\n\n4. UNEARNED REVENUE   — cash received in advance, service not yet done\n   Dr Unearned Revenue  /  Cr Revenue</div>'},
+      {h:"Prepaid example",body:'<div class="example-box"><b>Paid $12,000 for 12 months insurance on 1 July.</b><br>At 31 December (6 months used):<br>Dr Insurance Expense $6,000<br>Cr Prepaid Insurance $6,000<br><br>Logic: 6/12 of $12,000 = $6,000 has been "used up" as an expense.</div>'},
+      {h:"Accrued expense example",body:'<div class="example-box"><b>Staff earned $3,000 wages this week, not paid until next week.</b><br>Dr Wages Expense $3,000<br>Cr Wages Payable $3,000<br><br>Logic: The expense happened this period so we record it now even though cash hasn\'t moved.</div>'},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Unearned Revenue is a LIABILITY</b> — cash received but service not yet provided. You still owe the customer the work. Once the work is done, Dr Unearned Revenue / Cr Revenue to recognise it.</div>'}
+    ]
+  },
+  {
+    id:"T7",label:"T7: Financials",title:"Topic 7 — Financial Statements",
+    sections:[
+      {h:"The 3 main financial statements",body:'<div class="formula-box">1. INCOME STATEMENT   — profit/loss over a PERIOD\n2. BALANCE SHEET      — financial position at a POINT in time\n3. CASH FLOW STATEMENT — cash movements over a PERIOD</div>'},
+      {h:"Income Statement",body:'<div class="example-box">Revenue<br>Less: Cost of Goods Sold (COGS)<br>= GROSS PROFIT<br>Less: Operating Expenses<br>= OPERATING PROFIT (EBIT)<br>Less: Interest Expense<br>= NET PROFIT BEFORE TAX<br>Less: Tax<br>= NET PROFIT AFTER TAX</div>'},
+      {h:"Balance Sheet",body:'<div class="example-box">ASSETS<br>  Current Assets (cash, AR, inventory)<br>  Non-Current Assets (equipment, buildings)<br>= TOTAL ASSETS<br><br>LIABILITIES<br>  Current Liabilities (AP, GST payable)<br>  Non-Current Liabilities (long-term loans)<br>= TOTAL LIABILITIES<br><br>OWNER\'S EQUITY<br>  Capital + Retained Earnings<br>= TOTAL EQUITY<br><br>TOTAL ASSETS = TOTAL LIABILITIES + TOTAL EQUITY</div>'},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Balance Sheet = snapshot (one date).</b> Income Statement = movie (a period of time). The exam loves testing this distinction. "At 30 June 2024" = Balance Sheet. "For the year ended 30 June 2024" = Income Statement.</div>'}
+    ]
+  },
+  {
+    id:"T8",label:"T8: Budgeting",title:"Topic 8 — Budgeting",
+    sections:[
+      {h:"What is budgeting?",body:"<p>A budget is a <b>financial plan for the future</b>. Businesses use budgets to set targets, allocate resources and measure performance. The Master Budget is the full set of all budgets combined.</p>"},
+      {h:"The budgeting order",body:'<div class="formula-box">STEP 1: Sales Budget          (always first — drives everything)\nSTEP 2: Production Budget     (how much to make)\nSTEP 3: Materials/Labour/OH   (what it costs to make)\nSTEP 4: Operating Expenses    (selling, admin costs)\nSTEP 5: Cash Budget           (cash inflows & outflows)\nSTEP 6: Budgeted Financials   (budgeted P&L and Balance Sheet)</div>'},
+      {h:"Why sales budget is first",body:"<p>Everything flows from expected sales. You can't know how much to produce until you know how much you'll sell. You can't plan cash flows until you know production costs. It all starts with sales.</p>"},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>Master Budget</b> = ALL budgets together (operating + financial). Sales budget always comes FIRST. Cash budget comes near the end. This order is frequently tested.</div>'}
+    ]
+  },
+  {
+    id:"T9",label:"T9: CVP",title:"Topic 9 — Cost-Volume-Profit Analysis",
+    sections:[
+      {h:"Fixed vs Variable costs",body:'<div class="formula-box">VARIABLE COSTS — change with volume (materials, sales commission)\nFIXED COSTS    — stay the same regardless of volume (rent, salaries)\nTOTAL COST     = Fixed Costs + (Variable Cost per unit x Units)</div>'},
+      {h:"The key CVP formulas",body:'<div class="formula-box">Contribution Margin (CM) per unit = Selling Price - Variable Cost per unit\nCM Ratio = CM per unit / Selling Price  (or Total CM / Revenue)\nBreak-even (units) = Fixed Costs / CM per unit\nBreak-even ($)     = Fixed Costs / CM Ratio\nTarget profit (units) = (Fixed Costs + Target Profit) / CM per unit\nMargin of Safety = Actual Sales - Break-even Sales</div>'},
+      {h:"Worked example",body:'<div class="example-box"><b>Selling price = $50, Variable cost = $20, Fixed costs = $60,000</b><br><br>CM per unit = $50 - $20 = $30<br>CM Ratio = $30 / $50 = 60%<br>Break-even (units) = $60,000 / $30 = 2,000 units<br>Break-even ($) = $60,000 / 0.60 = $100,000<br><br>If actual sales = 2,500 units:<br>Margin of Safety = 2,500 - 2,000 = 500 units</div>'},
+      {h:"What break-even means",body:"<p>At break-even, the business makes <b>zero profit and zero loss</b>. Every unit sold ABOVE break-even contributes pure profit (the CM amount per unit).</p>"},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>CM is NOT gross profit.</b> CM = Revenue - Variable Costs only. Gross Profit = Revenue - COGS (which may include fixed manufacturing costs). For CVP always use Contribution Margin.</div>'}
+    ]
+  },
+  {
+    id:"T10",label:"T10: Ratios",title:"Topic 10 — Financial Statement Analysis",
+    sections:[
+      {h:"Profitability ratios",body:'<div class="formula-box">Gross Profit Margin  = Gross Profit / Revenue x 100\nNet Profit Margin    = Net Income / Revenue x 100\nReturn on Assets     = Net Income / Total Assets x 100\nReturn on Equity     = Net Income / Shareholders Equity x 100</div>'},
+      {h:"Liquidity ratios",body:'<div class="formula-box">Current Ratio  = Current Assets / Current Liabilities\nQuick Ratio    = (Current Assets - Inventory) / Current Liabilities\n\nAbove 1.0 = can pay short-term debts. Below 1.0 = danger zone.</div>'},
+      {h:"Solvency ratios",body:'<div class="formula-box">Debt-to-Assets       = Total Debt / Total Assets\nTimes Interest Earned = EBIT / Interest Expense\n\nHigher debt-to-assets = more risk.\nHigher times interest earned = safer (covers interest easily).</div>'},
+      {h:"Activity ratios",body:'<div class="formula-box">Asset Turnover = Revenue / Total Assets\n(How efficiently assets generate sales)</div>'},
+      {h:"DuPont Analysis",body:'<div class="formula-box">ROE = Net Profit Margin x Asset Turnover x Equity Multiplier\n\nEquity Multiplier = Total Assets / Shareholders Equity\n\nThis breaks ROE into 3 drivers:\n- Profitability (how much profit per dollar of sales)\n- Efficiency   (how much sales per dollar of assets)\n- Leverage     (how much assets per dollar of equity)</div>'},
+      {h:"Key exam tip",body:'<div class="tip-box"><b>For interpretation questions:</b> Always say what the number MEANS in plain English. "An ROE of 25% means the company generates 25 cents of profit for every $1 of shareholders equity." Just stating the number is not enough.</div>'}
+    ]
+  }
+];
+
+var Q=[
+  {t:"T1: Intro",q:"What is the PRIMARY purpose of accounting?",o:["Minimise tax obligations","Provide useful info for decision making","Record all cash transactions","Comply with ATO requirements"],a:1,e:"Accounting exists to provide useful financial information that helps users make informed decisions — not tax or compliance."},
+  {t:"T1: Intro",q:"The AASB is responsible for:",o:["Setting Australian tax rates","Developing accounting standards in Australia","Auditing large public companies","Regulating the ASX"],a:1,e:"The Australian Accounting Standards Board (AASB) develops and maintains accounting standards governing financial reporting in Australia."},
+  {t:"T2: Elements",q:"The accounting equation is:",o:["Assets = Revenue - Expenses","Assets = Liabilities + Owner's Equity","Assets - Liabilities = Revenue","Owner's Equity = Assets + Liabilities"],a:1,e:"Assets = Liabilities + Owner's Equity. Must ALWAYS balance — every transaction affects both sides equally."},
+  {t:"T2: Elements",q:"Which of the following is a LIABILITY?",o:["Accounts receivable","Inventory","Accounts payable","Equipment"],a:2,e:"Accounts payable is money owed to others — a liability. AR, inventory and equipment are all assets."},
+  {t:"T2: Elements",q:"Under accrual accounting, revenue is recognised when:",o:["Cash is received","Invoice is sent","Performance obligation is satisfied","Bank is reconciled"],a:2,e:"Accrual accounting recognises revenue when earned (work done), regardless of cash. This is the matching principle."},
+  {t:"T3: Transactions",q:"A business pays $2,000 rent in cash. The effect on the accounting equation is:",o:["Assets +$2k; Equity +$2k","Assets -$2k; Equity -$2k","Assets +$2k; Liabilities +$2k","No effect"],a:1,e:"Cash (asset) -$2,000 AND equity -$2,000 (rent expense). Both sides decrease equally — equation stays balanced."},
+  {t:"T3: Transactions",q:"A business buys equipment for $10,000 on credit. The effect is:",o:["Assets +$10k; Equity +$10k","Assets +$10k; Liabilities +$10k","Assets -$10k; Liabilities +$10k","No effect — cash not paid"],a:1,e:"Equipment (asset) +$10,000 AND accounts payable (liability) +$10,000. Both sides increase equally."},
+  {t:"T4: Journals",q:"When cash is paid for an expense, the journal entry is:",o:["Dr Cash; Cr Expense","Dr Expense; Cr Cash","Dr Expense; Cr Liability","Dr Liability; Cr Cash"],a:1,e:"Expenses INCREASE with a Debit. Cash (asset) DECREASES with a Credit. Always: Dr Expense, Cr Cash."},
+  {t:"T4: Journals",q:"Which account INCREASES with a Credit?",o:["Cash","Accounts receivable","Accounts payable","Equipment"],a:2,e:"Liabilities (like Accounts Payable) increase with Credits. Assets increase with Debits — opposite rules."},
+  {t:"T4: Journals",q:"A customer pays $3,000 they owed. The journal entry is:",o:["Dr Cash; Cr Revenue","Dr AR; Cr Cash","Dr Cash; Cr Accounts Receivable","Dr Revenue; Cr Cash"],a:2,e:"Cash increases (Dr Cash) and AR decreases (Cr AR). Revenue was already recorded at time of sale."},
+  {t:"T4: Journals",q:"The General Ledger is:",o:["All transactions in date order","Transactions grouped by account","A list of unpaid invoices","The final financial statements"],a:1,e:"The General Ledger groups transactions BY ACCOUNT. The General Journal records them in date order."},
+  {t:"T5: GST",q:"When a business COLLECTS GST from customers it is recorded as:",o:["Revenue","GST Receivable (asset)","GST Payable (liability)","An expense"],a:2,e:"Collected GST belongs to the ATO, not the business. It's a liability (GST Payable) until remitted."},
+  {t:"T5: GST",q:"Australia's GST rate is:",o:["5%","12.5%","10%","15%"],a:2,e:"Australia's GST is 10%, applied to most goods and services."},
+  {t:"T6: BDAs",q:"Wages earned by staff but not yet paid is an example of:",o:["Prepaid expense","Accrued revenue","Accrued expense","Unearned revenue"],a:2,e:"Accrued expenses are costs INCURRED but not yet paid. Unpaid wages is the classic example."},
+  {t:"T6: BDAs",q:"$12,000 insurance paid 1 July covers 12 months. BDA at 31 December:",o:["Dr Insurance Exp $12k; Cr Prepaid $12k","Dr Prepaid $6k; Cr Insurance Exp $6k","Dr Insurance Exp $6k; Cr Prepaid $6k","No adjustment needed"],a:2,e:"6/12 months used = $6,000. Dr Insurance Expense $6,000 and Cr Prepaid Insurance $6,000."},
+  {t:"T6: BDAs",q:"Unearned Revenue is classified as:",o:["An asset","A liability","Owner's equity","Revenue"],a:1,e:"Cash received BEFORE service is provided. Still owe the customer the work — it's a liability."},
+  {t:"T7: Financials",q:"Which statement shows financial position at a SPECIFIC point in time?",o:["Income Statement","Cash Flow Statement","Balance Sheet","Statement of Changes in Equity"],a:2,e:"The Balance Sheet is a snapshot on ONE date showing assets, liabilities and equity at that moment."},
+  {t:"T7: Financials",q:"Gross Profit =",o:["Revenue - All Expenses","Revenue - Cost of Goods Sold","Net Income + Tax","Operating Income - Interest"],a:1,e:"Gross Profit = Revenue - COGS. Profitability BEFORE operating expenses, interest and tax."},
+  {t:"T8: Budgeting",q:"Which budget is prepared FIRST?",o:["Production budget","Cash budget","Sales budget","Expenses budget"],a:2,e:"Sales budget ALWAYS comes first. All other budgets depend on projected sales volumes."},
+  {t:"T8: Budgeting",q:"The Master Budget is:",o:["A single annual figure","A full set of all budgets","Only the cash flow budget","The board-approved budget"],a:1,e:"The Master Budget is the COMPLETE package — all operating AND financial budgets combined."},
+  {t:"T9: CVP",q:"Contribution Margin =",o:["Revenue - Fixed Costs","Revenue - Variable Costs","Gross Profit - Operating Expenses","Net Income + Depreciation"],a:1,e:"CM = Revenue - Variable Costs. What's left after variable costs to cover fixed costs and profit."},
+  {t:"T9: CVP",q:"Break-even point in units =",o:["Fixed Costs / Selling Price","Fixed Costs / CM per unit","Variable Costs / Selling Price","Total Costs / Units Sold"],a:1,e:"BEP (units) = Fixed Costs / CM per unit. At break-even, profit = exactly $0."},
+  {t:"T9: CVP",q:"Fixed Costs=$60,000. Price=$50/unit. Variable cost=$20/unit. Break-even:",o:["1,000 units","1,500 units","2,000 units","3,000 units"],a:2,e:"CM per unit = $50-$20 = $30. BEP = $60,000/$30 = 2,000 units."},
+  {t:"T9: CVP",q:"Margin of Safety =",o:["Break-even Sales - Actual Sales","Actual Sales - Break-even Sales","Fixed Costs / CM Ratio","CM / Revenue"],a:1,e:"Margin of Safety = Actual Sales - Break-even Sales. How far sales can fall before a loss."},
+  {t:"T10: Ratios",q:"Gross Profit Margin =",o:["Net Income / Revenue x 100","Gross Profit / Revenue x 100","Revenue / Total Assets x 100","EBIT / Interest Expense"],a:1,e:"GPM = Gross Profit / Revenue x 100. Profit remaining after COGS from each sales dollar."},
+  {t:"T10: Ratios",q:"Return on Equity (ROE) =",o:["Net Income / Total Assets x 100","Net Income / Shareholders Equity x 100","EBIT / Revenue x 100","Gross Profit / Equity x 100"],a:1,e:"ROE = Net Income / Shareholders Equity x 100. How effectively management uses investors money."},
+  {t:"T10: Ratios",q:"A Current Ratio of 0.8 indicates:",o:["High profitability","Current liabilities exceed current assets","80% of assets funded by equity","Strong short-term liquidity"],a:1,e:"Current Ratio = Current Assets / Current Liabilities. Below 1.0 means more owed short-term than liquid assets available — risk."},
+  {t:"T10: Ratios",q:"DuPont Analysis decomposes ROE into:",o:["Gross Margin x Asset Turnover x Leverage","Net Profit Margin x Asset Turnover x Equity Multiplier","EBIT x Interest Coverage x Debt Ratio","Operating Margin x Current Ratio x D/E"],a:1,e:"DuPont: ROE = Net Profit Margin x Asset Turnover x Equity Multiplier. Reveals whether low ROE comes from profitability, efficiency or leverage."}
+];
+
+var topics=[...new Set(Q.map(function(q){return q.t;}))];
+var selectedTopics=new Set(topics);
+var qOrder=[];
+var idx=0,score=0,answered=false;
+var topicStats={};
+var currentOpts=[],correctIdx=0;
+var activeCourse=null;
+
+function showTab(tab){
+  document.getElementById('crash-screen').style.display=tab==='crash'?'block':'none';
+  document.getElementById('quiz-screen').style.display=tab==='quiz'?'block':'none';
+  document.getElementById('summary-screen').style.display=tab==='summary'?'block':'none';
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  var idx2=['crash','quiz','summary'].indexOf(tab);
+  document.querySelectorAll('.tab')[idx2].classList.add('active');
+}
+
+function buildCrashNav(){
+  var nav=document.getElementById('topic-nav');
+  var contents=document.getElementById('crash-contents');
+  nav.innerHTML='';contents.innerHTML='';
+  COURSES.forEach(function(c,i){
+    var btn=document.createElement('button');
+    btn.className='tnav-btn'+(i===0?' active':'');
+    btn.textContent=c.label;
+    btn.onclick=function(){showCourse(c.id);};
+    nav.appendChild(btn);
+    var div=document.createElement('div');
+    div.id='course-'+c.id;
+    div.className='crash-content'+(i===0?' visible':'');
+    var inner='<div class="crash-title">'+c.title+'</div>';
+    c.sections.forEach(function(s){
+      inner+='<div class="crash-section"><h4>'+s.h+'</h4>'+s.body+'</div>';
+    });
+    div.innerHTML=inner;
+    contents.appendChild(div);
+  });
+  activeCourse=COURSES[0].id;
+}
+
+function showCourse(id){
+  document.querySelectorAll('.crash-content').forEach(function(d){d.classList.remove('visible');});
+  document.querySelectorAll('.tnav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('course-'+id).classList.add('visible');
+  var idx2=COURSES.findIndex(function(c){return c.id===id;});
+  document.querySelectorAll('.tnav-btn')[idx2].classList.add('active');
+  activeCourse=id;
+}
+
+function buildTopicGrid(){
+  var grid=document.getElementById('topic-grid');
+  grid.innerHTML='';
+  topics.forEach(function(t){
+    var el=document.createElement('label');
+    el.className='topic-check on';
+    el.innerHTML='<input type="checkbox" checked> '+t;
+    el.addEventListener('click',function(e){
+      e.preventDefault();
+      if(selectedTopics.has(t)){if(selectedTopics.size>1){selectedTopics.delete(t);el.classList.remove('on');}}
+      else{selectedTopics.add(t);el.classList.add('on');}
+    });
+    grid.appendChild(el);
+  });
+}
+
+function shuffle(arr){var a=arr.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}return a;}
+
+function startQuiz(){
+  qOrder=shuffle(Q.filter(function(q){return selectedTopics.has(q.t);}));
+  idx=0;score=0;answered=false;
+  topics.forEach(function(t){topicStats[t]={r:0,w:0};});
+  document.getElementById('filter-section') && (document.getElementById('filter-section').style.display='none');
+  document.querySelector('.filter-section').style.display='none';
+  document.getElementById('start-btn').style.display='none';
+  document.getElementById('topic-grid').style.display='none';
+  document.querySelector('.filter-label').style.display='none';
+  document.getElementById('q-area').style.display='block';
+  showQ();
+}
+
+function showQ(){
+  if(idx>=qOrder.length){showSummary();return;}
+  answered=false;
+  var q=qOrder[idx],total=qOrder.length,pct=Math.round((idx/total)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('q-counter').textContent='Question '+(idx+1)+' of '+total;
+  document.getElementById('score-top').textContent=score+' correct';
+  document.getElementById('q-topic').textContent=q.t;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-exp').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('score-bottom').textContent='';
+  var indices=q.o.map(function(_,i){return i;});
+  var shuffled=shuffle(indices);
+  currentOpts=shuffled.map(function(i){return q.o[i];});
+  correctIdx=shuffled.indexOf(q.a);
+  var opts=document.getElementById('q-options');
+  opts.innerHTML='';
+  currentOpts.forEach(function(o,i){
+    var btn=document.createElement('button');
+    btn.className='opt';btn.textContent=o;
+    btn.addEventListener('click',function(){selectAns(i);});
+    opts.appendChild(btn);
+  });
+}
+
+function selectAns(chosen){
+  if(answered)return;
+  answered=true;
+  var q=qOrder[idx],isRight=(chosen===correctIdx);
+  var btns=document.querySelectorAll('.opt');
+  btns.forEach(function(b,i){
+    b.disabled=true;
+    if(i===correctIdx)b.classList.add('reveal');
+    if(i===chosen&&!isRight)b.classList.add('wrong');
+  });
+  if(isRight){score++;topicStats[q.t].r++;}else{topicStats[q.t].w++;}
+  var exp=document.getElementById('q-exp');
+  exp.className='explanation'+(isRight?'':' wrong');
+  exp.textContent=(isRight?'Correct. ':'Incorrect. ')+q.e;
+  exp.style.display='block';
+  document.getElementById('score-bottom').textContent=score+'/'+(idx+1)+' correct so far';
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function nextQ(){idx++;showQ();}
+
+function pbar(pct){var f=Math.round(pct/10),s='';for(var i=0;i<10;i++)s+=i<f?'|':'.';return s;}
+
+function showSummary(){
+  document.getElementById('results-tab').style.display='inline-block';
+  showTab('summary');
+  var total=qOrder.length,pct=Math.round((score/total)*100);
+  var grade=pct>=80?'HD territory':pct>=70?'Distinction territory':pct>=60?'Credit territory':pct>=50?'Pass territory':'Needs more work';
+  document.getElementById('sum-score').textContent=score+'/'+total;
+  document.getElementById('sum-label').textContent=pct+'%  --  '+grade;
+  var bgrid=document.getElementById('breakdown-grid');
+  bgrid.innerHTML='';
+  var active=topics.filter(function(t){return (topicStats[t].r+topicStats[t].w)>0;});
+  active.forEach(function(t){
+    var r=topicStats[t].r,w=topicStats[t].w,tot=r+w,tp=tot>0?Math.round((r/tot)*100):0;
+    var row=document.createElement('div');row.className='brow';
+    row.innerHTML='<span class="tname">'+t+'</span><span class="tscore '+(tp>=70?'ok':'bad')+'">'+r+'/'+tot+'</span>';
+    bgrid.appendChild(row);
+  });
+  var now=new Date();
+  var ds=now.toLocaleDateString('en-AU',{day:'2-digit',month:'short',year:'numeric'});
+  var ts=now.toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'});
+  var weak=active.filter(function(t){return topicStats[t].w>0;});
+  var strong=active.filter(function(t){return topicStats[t].w===0&&topicStats[t].r>0;});
+  var lines=[];
+  lines.push('MAA103 Accounting for Decision Making');
+  lines.push('Exam Prep Quiz  |  '+ds+' at '+ts);
+  lines.push('');
+  lines.push('RESULT: '+score+'/'+total+' ('+pct+'%)  --  '+grade);
+  lines.push('');
+  lines.push('TOPIC BREAKDOWN');
+  lines.push('-'.repeat(44));
+  active.forEach(function(t){
+    var r=topicStats[t].r,w=topicStats[t].w,tot=r+w,tp=tot>0?Math.round((r/tot)*100):0;
+    var mark=tp>=70?'[OK] ':'[!!] ';
+    lines.push(mark+t.padEnd(20)+(r+'/'+tot).padEnd(6)+pbar(tp)+' '+tp+'%');
+  });
+  lines.push('-'.repeat(44));
+  if(weak.length>0)lines.push('Needs work: '+weak.map(function(t){return t.replace(/^T\d+: /,'');}).join(', '));
+  if(strong.length>0)lines.push('Strong:     '+strong.map(function(t){return t.replace(/^T\d+: /,'');}).join(', '));
+  lines.push('');
+  lines.push('Generated by MAA103 Quiz Trainer');
+  document.getElementById('share-text').textContent=lines.join('\n');
+}
+
+function copyResult(){
+  var text=document.getElementById('share-text').textContent;
+  var btn=document.getElementById('copy-btn');
+  var done=function(){btn.textContent='Copied!';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copy to clipboard';btn.classList.remove('copied');},2000);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(function(){fb(text,done);});}
+  else{fb(text,done);}
+}
+function fb(text,done){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0;';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);done();}
+
+function resetQuiz(){
+  document.querySelector('.filter-section').style.display='block';
+  document.getElementById('start-btn').style.display='inline-block';
+  document.getElementById('topic-grid').style.display='grid';
+  document.querySelector('.filter-label').style.display='block';
+  document.getElementById('q-area').style.display='none';
+  showTab('quiz');
+}
+
+function focusWeak(){
+  var weak=topics.filter(function(t){return topicStats[t]&&topicStats[t].w>0;});
+  if(weak.length===0){resetQuiz();return;}
+  selectedTopics=new Set(weak);
+  document.querySelectorAll('.topic-check').forEach(function(el,i){
+    if(selectedTopics.has(topics[i]))el.classList.add('on');else el.classList.remove('on');
+  });
+  document.querySelector('.filter-section').style.display='none';
+  document.getElementById('q-area').style.display='block';
+  qOrder=shuffle(Q.filter(function(q){return selectedTopics.has(q.t);}));
+  idx=0;score=0;answered=false;
+  topics.forEach(function(t){topicStats[t]={r:0,w:0};});
+  showTab('quiz');
+  showQ();
+}
+
+buildCrashNav();
+buildTopicGrid();
+topics.forEach(function(t){topicStats[t]={r:0,w:0};});
+</script>
+</body>
+</html>
